@@ -2,14 +2,6 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/4.3.2/types.yaml
-  # - plugin:cloudify-aws-plugin
-  # - plugin:cloudify-awssdk-plugin
-  # - plugin:cloudify-azure-plugin
-  # - plugin:cloudify-dblb
-  # - plugin:cloudify-diamond-plugin
-  # - plugin:cloudify-gcp-plugin
-  # - plugin:cloudify-kubernetes-plugin
-  # - plugin:cloudify-openstack-plugin
   - plugin:cloudify-utilities-plugin
 
 inputs:
@@ -17,6 +9,23 @@ inputs:
   default_main_file_name:
     type: string
     default: openstack.yaml
+
+  network_main_file_name:
+    type: string
+    description: The blueprint file name in the network repo. Change to update-blueprint.yaml for AWS.
+    default: simple-blueprint.yaml
+
+  db_main_file_name:
+    type: string
+    default: { get_input: default_main_file_name }
+
+  lb_main_file_name:
+    type: string
+    default: { get_input: default_main_file_name }
+
+  drupal_main_file_name:
+    type: string
+    default: { get_input: default_main_file_name }
 
   kubernetes_blueprint_archive:
     type: string
@@ -32,27 +41,9 @@ inputs:
     description: The network blueprint archive URL. Change if not using Openstack.
     default: https://github.com/cloudify-examples/openstack-example-network/archive/4.3.2.zip
 
-  network_main_file_name:
-    type: string
-    description: The blueprint file name in the network repo. Change to update-blueprint.yaml for AWS.
-    default: simple-blueprint.yaml
-
-  network_deployment_inputs:
-    default: Any additional inputs. Comment out if not using Openstack.
-    default:
-      external_network_name: external_network
-
-  db_blueprint_id:
-    type: string
-    default: db
-
   db_blueprint_archive:
     type: string
     default: https://github.com/cloudify-examples/mariadb-blueprint/archive/4.3.2.zip
-
-  lb_blueprint_id:
-    type: string
-    default: lb
 
   lb_blueprint_archive:
     type: string
@@ -66,18 +57,31 @@ inputs:
     type: string
     default: https://github.com/EarthmanT/e2e/archive/new-version.zip
 
+  network_deployment_inputs:
+    default: Any additional inputs. Comment out if not using Openstack.
+    default:
+      external_network_name: external_network
+
+  db_blueprint_id:
+    type: string
+    default: db
+
+  lb_blueprint_id:
+    type: string
+    default: lb
+
 node_templates:
 
-  kubernetes:
+  k8s-e2e:
     type: cloudify.nodes.DeploymentProxy
     properties:
       resource_config:
         blueprint:
-          id: kubernetes
+          id: k8s-e2e
           blueprint_archive: { get_input: kubernetes_blueprint_archive }
           main_file_name: { get_input: default_main_file_name }
         deployment:
-          id: kubernetes
+          id: k8s-e2e
           outputs:
             kubernetes_master_public_ip: kubernetes_master_public_ip
             kubernetes_cluster_master_ip: kubernetes_cluster_master_ip
@@ -112,12 +116,13 @@ node_templates:
         configure: {}
         start: {}
         stop: {}
+        delete: {}
     properties:
       resource_config:
         blueprint:
           id: { get_input: db_blueprint_id }
           blueprint_archive: { get_input: db_blueprint_archive }
-          main_file_name: { get_input: default_main_file_name }
+          main_file_name: { get_input: db_main_file_name }
         deployment:
           id: { get_input: db_blueprint_id }
           inputs:
@@ -139,7 +144,7 @@ node_templates:
         blueprint:
           id: { get_input: lb_blueprint_id }
           blueprint_archive: { get_input: lb_blueprint_archive }
-          main_file_name: { get_input: default_main_file_name }
+          main_file_name: { get_input: lb_main_file_name }
         deployment:
           id: { get_input: lb_blueprint_id }
           inputs:
@@ -162,7 +167,7 @@ node_templates:
         blueprint:
           id: drupal
           blueprint_archive: { get_input: drupal_blueprint_archive }
-          main_file_name: { get_input: default_main_file_name }
+          main_file_name: { get_input: drupal_main_file_name }
         deployment:
           id: drupal
           inputs:
@@ -172,22 +177,22 @@ node_templates:
           outputs: {}
         reexecute: false
 
-  wordpress:
+  db-lb-app:
     type: cloudify.nodes.DeploymentProxy
     relationships:
     - type: cloudify.relationships.depends_on
-      target: kubernetes
+      target: k8s-e2e
     - type: cloudify.relationships.depends_on
       target: lb
     interfaces: *no_deploy_nodes
     properties:
       resource_config:
         blueprint:
-          id: wordpress
+          id: db-lb-app
           blueprint_archive: { get_input: wordpress_blueprint_archive }
           main_file_name: wordpress.yaml
         deployment:
-          id: wordpress
+          id: db-lb-app
           inputs:
             environment_blueprint_filename: { get_input: default_main_file_name }
             db_blueprint_id: { get_input: db_blueprint_id }
