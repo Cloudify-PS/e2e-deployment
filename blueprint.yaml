@@ -1,7 +1,7 @@
 tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
-  - http://www.getcloudify.org/spec/cloudify/4.3.2/types.yaml
+  - http://www.getcloudify.org/spec/cloudify/4.5/types.yaml
   - plugin:cloudify-utilities-plugin
 
 inputs:
@@ -39,19 +39,19 @@ inputs:
   network_blueprint_archive:
     type: string
     description: The network blueprint archive URL. Change if not using Openstack.
-    default: https://github.com/cloudify-examples/openstack-example-network/archive/4.3.2.zip
+    default: https://github.com/cloudify-examples/openstack-example-network/archive/4.5.zip
 
   db_blueprint_archive:
     type: string
-    default: https://github.com/cloudify-examples/mariadb-blueprint/archive/4.3.2.zip
+    default: https://github.com/cloudify-examples/mariadb-blueprint/archive/4.5.zip
 
   lb_blueprint_archive:
     type: string
-    default: https://github.com/cloudify-examples/haproxy-blueprint/archive/4.3.2.zip
+    default: https://github.com/cloudify-examples/haproxy-blueprint/archive/4.5.zip
 
   drupal_blueprint_archive:
     type: string
-    default: https://github.com/cloudify-examples/drupal-blueprint/archive/4.3.2.zip
+    default: https://github.com/cloudify-examples/drupal-blueprint/archive/4.5.zip
 
   wordpress_blueprint_archive:
     type: string
