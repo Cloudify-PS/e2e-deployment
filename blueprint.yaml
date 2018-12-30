@@ -179,11 +179,6 @@ node_templates:
 
   db-lb-app:
     type: cloudify.nodes.DeploymentProxy
-    relationships:
-    - type: cloudify.relationships.depends_on
-      target: k8s-e2e
-    - type: cloudify.relationships.depends_on
-      target: lb
     interfaces: *no_deploy_nodes
     properties:
       resource_config:
@@ -191,11 +186,4 @@ node_templates:
           id: db-lb-app
           blueprint_archive: { get_input: wordpress_blueprint_archive }
           main_file_name: wordpress.yaml
-        deployment:
-          id: db-lb-app
-          inputs:
-            environment_blueprint_filename: { get_input: default_main_file_name }
-            db_blueprint_id: { get_input: db_blueprint_id }
-            lb_blueprint_id: { get_input: lb_blueprint_id }
-          outputs: {}
         reexecute: false
