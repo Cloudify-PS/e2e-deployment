@@ -29,7 +29,7 @@ inputs:
 
   kubernetes_blueprint_archive:
     type: string
-    default: https://github.com/cloudify-examples/simple-kubernetes-blueprint/archive/4.3.2.zip
+    default: https://github.com/cloudify-examples/simple-kubernetes-blueprint/archive/3c30191dcda9d84f07b1e6d64bf9f4e404380072.zip
 
   network_blueprint_id:
     type: string
