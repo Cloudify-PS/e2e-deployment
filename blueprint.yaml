@@ -55,7 +55,7 @@ inputs:
 
   wordpress_blueprint_archive:
     type: string
-    default: https://github.com/Cloudify-PS/e2e-deployment/archive/v7.zip
+    default: https://github.com/Cloudify-PS/e2e-deployment/archive/v9.zip 
      
   network_deployment_inputs:
     default: Any additional inputs. Comment out if not using Openstack.
