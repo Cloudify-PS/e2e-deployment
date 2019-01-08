@@ -29,7 +29,7 @@ inputs:
 
   kubernetes_blueprint_archive:
     type: string
-    default: https://github.com/cloudify-examples/simple-kubernetes-blueprint/archive/3c30191dcda9d84f07b1e6d64bf9f4e404380072.zip
+    default: https://github.com/cloudify-examples/simple-kubernetes-blueprint/archive/master.zip
 
   network_blueprint_id:
     type: string
@@ -82,6 +82,8 @@ node_templates:
           main_file_name: { get_input: default_main_file_name }
         deployment:
           id: k8s-e2e
+          inputs:
+            kubernetes_cni_provider_blueprint: flannel.yaml
           outputs:
             kubernetes_master_public_ip: kubernetes_master_public_ip
             kubernetes_cluster_master_ip: kubernetes_cluster_master_ip
