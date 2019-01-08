@@ -136,7 +136,7 @@ node_templates:
         apiVersion: v1
         kind: PersistentVolumeClaim
         metadata:
-          name: wp-pv-claim
+          name: pv-claim
           labels:
             app: wordpress
         spec:
@@ -144,7 +144,7 @@ node_templates:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 20Gi
+              storage: 10Gi
     relationships:
       - type: cloudify.kubernetes.relationships.managed_by_master
         target: kubernetes_master
